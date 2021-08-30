@@ -78,28 +78,31 @@ client.on('message', async msg => {
                 else {
                     let board = gameQueue[index].chess.board();
                     let turn = gameQueue[index].chess.turn();
-                    gameQueue[index].board.printBoard(board, turn);
                     
                     if(gameQueue[index].chess.game_over()){
                         if(gameQueue[index].chess.in_checkmate()){
                             let player = turn === "w" ? "Black" : "White";
-                            await msg.channel.send("Checkmate! " + player + " won!");
+                            await msg.channel.send("**Checkmate!** " + player + " won!");
                         }
                         else if(gameQueue[index].chess.in_stalemate()){
-                            await msg.channel.send("Stalemate! Draw!");
+                            await msg.channel.send("**Stalemate!** Draw!");
                         }
                         else if(gameQueue[index].chess.in_draw()) {
-                            await msg.channel.send("Draw!");
+                            await msg.channel.send("**Draw!**");
                         }
                         fs.unlink("./temp/"+gameQueue[index].white+".png", (err) => {
                             if(err) console.log(err);
                             else {
                                 gameQueue.splice(index, 1);
+                                msg.channel.send("**Game Over!**");
                             }
                         });
                     }
                     else if(gameQueue[index].chess.in_check()){
                         await msg.channel.send("Check!");
+                    }
+                    else {
+                        gameQueue[index].board.printBoard(board, turn);
                     }
                 }
             }
